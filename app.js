@@ -78,6 +78,7 @@ if ('development' == app.get('env')) {
 
 app.get('/tenant1', routes.index);
 app.get('/users', user.list);
+app.get('/', routes.grader);
 
 var upload = multer(
 { storage: storage }
