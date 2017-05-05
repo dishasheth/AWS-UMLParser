@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/CloudApp.iml" filepath="$PROJECT_DIR$/.idea/CloudApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/AWS-UMLParser.iml" filepath="$PROJECT_DIR$/.idea/AWS-UMLParser.iml" />
     </modules>
   </component>
 </project>
