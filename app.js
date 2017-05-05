@@ -1,60 +1,101 @@
-var express = require('express');
-var app = express();
-var path = require('path');
-var formidable = require('formidable');
-var fs = require('fs');
-var exec=require('child_process').exec;
+var connect=require('connect');
+var favicon = require('serve-favicon');
+var bodyParser = require('body-parser');
 
+
+
+var formidable = require('formidable');
+var express = require('express')
+  , routes = require('./routes')
+  , user = require('./routes/user')
+  , http = require('http')
+  , path = require('path')
+  ,fs = require('fs')
+    ,unzip=require('unzip');
+var exec = require('child_process').exec;
+
+var multer=require('multer');
+
+var app = express();
+
+// all environments
+
+app.set('port', process.env.PORT || 3000);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+//app.use(express.favicon());
+//app.use(express.logger('dev'));
+//app.use(express.bodyParser());
+//app.use(express.methodOverride());
+app.use(bodyParser.urlencoded({extended: false}));
+//app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', function(req, res){
-  res.sendFile(path.join(__dirname, 'views/index.html'));
+var fpath;
+
+var storage = multer.diskStorage({
+  destination: function (request, file, callback) {
+    console.log(__dirname+'/uploads/');
+    callback(null, './uploads/');
+  },
+  filename: function (request, file, callback) {
+    console.log(file);
+    fpath="..\\input\\"+file.originalname.substring(0, file.originalname.lastIndexOf('.'))+"\\anirrudh.jpeg";
+    console.log(fpath);
+
+
+    //fs.createReadStream('./uploads/'+file).pipe(unzip.Extract({ path: './input/'+file.originalname.substring(0, file.originalname.lastIndexOf('.')) }));
+    exec('unzip ./uploads/'+file.originalname+' -d ./public/input/'+file.originalname.substring(0, file.originalname.lastIndexOf('.')),function (error, stdout, stderr) {
+      console.log('stdout: ' + stdout);
+      console.log('stderr: ' + stderr);
+      if (error !== null) {
+        console.log('exec error: ' + error);
+
+      }
+    });
+
+
+    console.log("after unzipping");
+    exec('java -jar "'+__dirname+ '\\classTenant2\\ani.jar" "'+__dirname+'\\public\\input\\'+file.originalname.substring(0, file.originalname.lastIndexOf('.'))+'"', function (error, stdout, stderr) {
+      if (stdout !== null) {
+        console.log("stdout -> " + stdout);
+      }
+      //fs.readFile(__dirname+'\\uploads\\example.png',"binary",function (error,file) {
+    });
+
+
+console.log("path.extname(file)"+__dirname+ '\\input\\test1\\anirrudh.jpeg');
+//fpath='..\\input\\test1\\anirrudh.jpeg';
+    // callback(null, file.originalname)
+    callback(null, file.originalname+path.extname(file));
+  }
 });
 
-app.post('/upload', function(req, res)
-{
+if ('development' == app.get('env')) {
+  //app.use(express.errorHandler());
+}
 
-  // create an incoming form object
-  var form = new formidable.IncomingForm();
+app.get('/tenant1', routes.index);
+app.get('/users', user.list);
 
-  // specify that we want to allow the user to upload multiple files in a single request
-  form.multiples = true;
+var upload = multer(
+{ storage: storage }
+);
 
-  // store all uploads in the /uploads directory
-  form.uploadDir = path.join(__dirname, '/uploads');
-
-  // every time a file has been uploaded successfully,
-  // rename it to it's orignal name
-  form.on('file', function(field, file) {
-    fs.rename(file.path, path.join(form.uploadDir, file.name));
-     exec('java -jar "'+__dirname+ '\\sequence\\sequence-10.0.jar" --headless "'+__dirname+'\\uploads\\'+file.name+'"',
-        function (error, stdout){
-          if(stdout !== null) {
-            console.log("Output -> "+stdout);
-              res.send(stdout);
-          }
-          if(error !== null){
-            console.log("Error -> "+error);
-          }
-        });
-  });
+app.post('/fileUpload', upload.single('file'), function(req, res){
+  console.log(req.body);
+  console.log(req.file);
 
 
-  // log any errors that occur
-  form.on('error', function(err) {
-    console.log('An error has occured: \n' + err);
-  });
-
-  // once all the files have been uploaded, send a response to the client
-  form.on('end', function() {
-    // res.end('success');
-  });
-
-  // parse the incoming request containing the form data
-  form.parse(req);
+  console.log('./uploads/');
+  //console.log(req.files); // form files
+  response = {"statusCode":204,"data":fpath};
+  console.log('inside 204');
+  res.send((response));
 
 });
 
-var server = app.listen(3000, function(){
-  console.log('Server listening on port 3000');
+http.createServer(app).listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
 });
