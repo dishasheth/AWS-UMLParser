@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+      <link rel="stylesheet" href='/bootstrap/css/bootstrap.css'/>
+
+      <script src="../javascripts/angular.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+      <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+      <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-social.css">-->
+      <script src="../angularjs/cloudapp.js"></script>
+
+  </head>
+  <body ng-app="CloudApp" ng-controller="myCtrl">
+  <!--Container for the entire page-->
+
+      <nav class="navbar-fixed-top navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#">UML Modelling</a>
+          </div>
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Grader</a></li>
+
+          </ul>
+          <button type="button" class="btn btn-default navbar-btn navbar-right">Sign Out</button>
+          <!--<div class="col-md-offset-10 col-md-2">
+              <button type="button" class="btn btn-primary">Primary</button>
+            </div>-->
+        </div>
+      </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+	<div class="col-md-offset-2 col-md-6">
+
+      <input type="file" file-model="myFile"/>
+<br>
+      <button ng-click="uploadFile()">Upload and Generate</button>
+<br>
+	</div>
+<br>
+    </div>
+   
+    <div class="row" ng-show="umlpanel" >
+      <div class="col-md-offset-1 col-md-10">
+        <div class="panel panel-warning" >
+          <div class="panel-heading">
+            UML Diagram
+          </div>
+          <div class="panel-body">
+            <img ng-src="{{imgpath}}" style="width=100%;">
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="row" ng-show="gradpanel">
+      <div class="col-md-offset-1 col-md-10">
+        <div class="panel panel-warning">
+          <div class="panel-heading">
+            Grading
+          </div>
+          <div class="panel-body">
+		 <label for="example-text-input" class="col-2 col-form-label">Score</label>
+  <div class="row">
+<div class="col-md-2">
+    <input class="form-control" ng-model="score" type="text" placeholder="eg. 5" id="example-text-input">
+</div>
+  </div>
+
+<label for="example-text-input1" class="col-2 col-form-label">Correctness</label>
+  <div class="row">
+<div class="col-md-2">
+    <input class="form-control" ng-model="score1" type="text" placeholder="eg. 80%" id="example-text-input1">
+</div>
+  </div>
+<br>
+<br>
+<button ng-click="grader()" type="button" class="btn btn-warning">Grade</button>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="footer navbar-fixed-bottom">
+Tenant-1 Grading
+</div>  </body>
+</html>
